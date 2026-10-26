@@ -1,0 +1,16 @@
+---
+title: Pipeline page
+---
+
+Some prose.
+
+```{python}
+print("hello from python 6*7 =", 6 * 7)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+plt.figure(figsize=(3, 2))
+plt.plot([1, 2, 3])
+plt.show()
+```

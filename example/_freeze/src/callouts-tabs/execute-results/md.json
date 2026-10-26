@@ -1,0 +1,12 @@
+{
+  "hash": "db82c2b3da246ce196efcbd931add29f",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: Callouts and tabs\ndescription: Quarto callouts become admonitions, panel tabsets become content tabs.\n---\n\n## Callouts\n\n::: {.callout-note}\nA note without an explicit title.\n:::\n\n::: {.callout-tip title=\"Pro tip\"}\nCallouts can contain **Markdown**, `code` and lists:\n\n- one\n- two\n:::\n\n::: {.callout-warning}\n## Heading as title\nThe heading becomes the admonition title.\n:::\n\n::: {.callout-caution collapse=\"true\" title=\"Click to expand\"}\nHidden until you open it.\n:::\n\n::: {.callout-important collapse=\"false\" title=\"Open by default\"}\nCollapsible, but open initially.\n\n::: {.callout-note title=\"Nested note\"}\nCallouts can be nested.\n:::\n:::\n\n## Tabsets\n\n::: {.panel-tabset}\n\n## Python\n\n```python\nprint(\"hello\")\n```\n\n## R\n\n```r\nprint(\"hello\")\n```\n\n:::\n\n::: {.panel-tabset}\n\n## Output\n\n::: {.cell execution_count=1}\n``` {.python .cell-code}\nprint(sum(range(10)))\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n45\n```\n:::\n:::\n\n\n## Explanation\n\nThe sum of 0 to 9.\n\n:::\n\n",
+    "supporting": [
+      "callouts-tabs_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

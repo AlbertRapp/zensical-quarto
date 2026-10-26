@@ -1,0 +1,33 @@
+---
+title: Tabsets
+---
+
+::: {.panel-tabset}
+
+## First A
+
+Content A1
+
+## First B
+
+Content B1
+
+:::
+
+::: {.panel-tabset}
+
+## Second A
+
+Content A2
+
+## Second B
+
+::: {.callout-note title="Callout in tab"}
+Inside a tab.
+:::
+
+## Second C
+
+Content C2
+
+:::

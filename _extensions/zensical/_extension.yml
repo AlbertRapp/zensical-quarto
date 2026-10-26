@@ -1,0 +1,30 @@
+title: Zensical Markdown
+author: Albert Rapp
+version: 0.1.0
+quarto-required: ">=1.5.0"
+contributes:
+  formats:
+    # Contributed as `gfm` so the format is used as `zensical-gfm`.
+    # (`md` would map to pandoc's markdown_strict writer, which drops
+    # figure/table captions and ids -- see NOTES.md.)
+    gfm:
+      preserve-yaml: true
+      wrap: preserve
+      # citations are resolved by filters/citations.lua instead
+      citeproc: false
+      filters:
+        # pre-quarto: runs while Quarto's custom nodes are still intact
+        - filters/callouts.lua
+        - filters/tabsets.lua
+        - filters/math.lua
+        # post-render: runs after Quarto has rendered crossrefs etc.
+        - path: filters/blocks.lua
+          at: post-render
+        - path: filters/figures.lua
+          at: post-render
+        - path: filters/code.lua
+          at: post-render
+        - path: filters/citations.lua
+          at: post-render
+        - path: filters/divs.lua
+          at: post-render

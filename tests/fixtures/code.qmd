@@ -1,0 +1,29 @@
+---
+title: Code cells
+---
+
+```{python}
+print("visible-output-123")
+```
+
+```{python}
+#| echo: false
+print("echo-false-output-456")
+```
+
+```{python}
+#| output: false
+print("hidden-output-789")
+```
+
+```{python}
+#| warning: false
+import warnings
+warnings.warn("suppressed-warning-xyz")
+print("after-suppressed")
+```
+
+```{python}
+import warnings
+warnings.warn("shown-warning-abc")
+```

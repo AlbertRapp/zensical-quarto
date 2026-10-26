@@ -1,0 +1,12 @@
+{
+  "hash": "a5536dbe4896e488b9dca4ba2f9efc51",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: Data analysis\ndescription: Pandas and Matplotlib output rendered at build time.\n---\n\n\n\n## Summary table\n\n::: {#tbl-summary .cell tbl-cap='Summary statistics per group.' execution_count=2}\n``` {.python .cell-code}\nfrom IPython.display import Markdown\n\nsummary = data.groupby(\"group\")[\"value\"].agg([\"mean\", \"std\", \"count\"]).round(2)\nMarkdown(summary.to_markdown())\n```\n\n::: {.cell-output .cell-output-display .cell-output-markdown execution_count=2}\n| group   |   mean |   std |   count |\n|:--------|-------:|------:|--------:|\n| A       |   0.09 |  0.77 |      50 |\n| B       |   1.31 |  0.77 |      50 |\n| C       |   2.95 |  1    |      50 |\n:::\n:::\n\n\n@tbl-summary summarises the simulated data.\n\n## Distribution\n\n::: {.cell execution_count=3}\n``` {.python .cell-code}\nfig, ax = plt.subplots(figsize=(6, 3.5))\nfor name, grp in data.groupby(\"group\"):\n    ax.hist(grp[\"value\"], bins=15, alpha=0.6, label=name)\nax.legend()\nplt.show()\n```\n\n::: {.cell-output .cell-output-display}\n![Histogram of values per group.](analysis_files/figure-commonmark/fig-hist-output-1.png){#fig-hist}\n:::\n:::\n\n\nThe groups in @fig-hist are clearly shifted.\n\n",
+    "supporting": [
+      "analysis_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

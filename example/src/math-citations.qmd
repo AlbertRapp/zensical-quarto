@@ -1,0 +1,24 @@
+---
+title: Math and citations
+description: LaTeX math via arithmatex and MathJax, citations resolved by Quarto.
+---
+
+## Math
+
+Inline math such as $a_1 * b_2 + \alpha_{i}$ works, as does display math:
+
+$$
+\sum_{i=1}^{n} x_i^* = \frac{n(n+1)}{2}, \quad \{x \mid x > 0\}
+$$
+
+## Citations
+
+Knuth's book on typesetting [@knuth1984] and Tufte's classic [@tufte2001]
+are both cited here.[^1]
+
+[^1]: Footnotes work too.
+
+## References
+
+::: {#refs}
+:::

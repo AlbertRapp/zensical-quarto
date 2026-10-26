@@ -1,0 +1,22 @@
+---
+title: Cross-references
+---
+
+```{python}
+#| label: fig-line
+#| fig-cap: "A line with *emphasis*"
+import matplotlib.pyplot as plt
+plt.figure(figsize=(3, 2))
+plt.plot([1, 2, 3])
+plt.show()
+```
+
+![A static figure](static.png){#fig-static}
+
+| x | y |
+|---|---|
+| 1 | 2 |
+
+: Numbers table {#tbl-nums}
+
+See @fig-line, @fig-static and @tbl-nums.
