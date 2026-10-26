@@ -325,7 +325,7 @@ def test_front_matter(fixture_site):
 def test_degraded_page_builds_readably(fixture_site):
     art = article(fixture_site, "degraded")
     text = art.get_text()
-    for snippet in ["Margin note content.", "Left column.", "Right column.", "print(x)", "Annotated line."]:
+    for snippet in ["Margin note content.", "Left column.", "Right column.", "print(x)", "Annotated line.", "Referenced callout body."]:
         assert snippet in text
     assert "<div" not in text and ":::" not in text and "```" not in text
 
@@ -335,6 +335,18 @@ def test_code_fold_becomes_details(fixture_site):
     fold = art.select_one("details.code-fold")
     assert fold is not None
     assert fold.select_one("div.language-python.highlight") is not None
+
+
+def test_callout_keeps_id(fixture_site):
+    box = article(fixture_site, "degraded").select_one("div.admonition.note#nte-ref")
+    assert box is not None
+
+
+@pytest.mark.xfail(strict=True, reason="callouts are converted before Quarto's crossref pass; see README Limitations")
+def test_callout_crossref_resolves(fixture_site):
+    art = article(fixture_site, "degraded")
+    assert "?@nte-ref" not in text_of(art)
+    assert art.select_one('a[href="#nte-ref"]') is not None
 
 
 # Example site ------------------------------------------------------------------

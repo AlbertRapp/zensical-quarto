@@ -5,6 +5,7 @@
 --   el.title    Inlines or Blocks, or nil when no title was given
 --   el.collapse "true" | "false" (strings), or nil when not collapsible
 --   el.content  Blocks
+--   el.attr     the callout's Attr (identifier, e.g. "nte-x")
 -- A leading header inside the callout is already moved into el.title.
 
 local function title_text(el)
@@ -20,6 +21,9 @@ function Callout(el)
     ["zensical-title"] = title_text(el),
     ["zensical-type"] = el.type,
   }
+  if el.attr and el.attr.identifier ~= "" then
+    attrs["zensical-id"] = el.attr.identifier
+  end
   local collapse = el.collapse ~= nil and tostring(el.collapse) or nil
   if collapse == "true" or collapse == "false" then
     attrs["zensical-block"] = "details"

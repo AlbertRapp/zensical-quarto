@@ -37,6 +37,9 @@ local function header(el, fence)
   if el.attributes["zensical-type"] then
     lines[#lines + 1] = "    type: " .. el.attributes["zensical-type"]
   end
+  if el.attributes["zensical-id"] then
+    lines[#lines + 1] = "    attrs: {id: " .. el.attributes["zensical-id"] .. "}"
+  end
   if el.attributes["zensical-open"] then
     lines[#lines + 1] = "    open: true"
   end

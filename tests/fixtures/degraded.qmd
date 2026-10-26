@@ -29,3 +29,11 @@ Left column.
 Right column.
 :::
 ::::
+
+## Callout cross-reference
+
+::: {#nte-ref .callout-note}
+Referenced callout body.
+:::
+
+See @nte-ref.
