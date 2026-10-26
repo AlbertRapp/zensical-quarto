@@ -55,12 +55,12 @@ print("hello")
 
 ## Output
 
-```{python}
-print(sum(range(10)))
+```{r}
+sum(1:10)
 ```
 
 ## Explanation
 
-The sum of 0 to 9.
+The sum of 1 to 10.
 
 :::

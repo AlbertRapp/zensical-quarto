@@ -2,13 +2,12 @@
 title: Cross-references
 ---
 
-```{python}
+```{r}
 #| label: fig-line
 #| fig-cap: "A line with *emphasis*"
-import matplotlib.pyplot as plt
-plt.figure(figsize=(3, 2))
-plt.plot([1, 2, 3])
-plt.show()
+#| fig-width: 3
+#| fig-height: 2
+plot(1:3, type = "l")
 ```
 
 ![A static figure](static.png){#fig-static}

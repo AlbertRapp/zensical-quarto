@@ -6,11 +6,13 @@ Two sites are built once per session:
   tests/_build/, rendered with the zensical-gfm format and built with the
   example's zensical.toml (minus its nav);
 * the example site -- example/, built exactly like `make site`.
+
+Code chunks are R, so R with knitr, rmarkdown, ggplot2, dplyr and tibble
+must be installed.
 """
 
 import functools
 import http.server
-import json
 import os
 import re
 import shutil
@@ -26,11 +28,8 @@ FIXTURES = ROOT / "tests" / "fixtures"
 BUILD = ROOT / "tests" / "_build"
 EXAMPLE = ROOT / "example"
 
-ENV = {**os.environ, "QUARTO_PYTHON": str(ROOT / ".venv" / "bin" / "python")}
-
-
 def run(cmd, cwd):
-    result = subprocess.run(cmd, cwd=cwd, env=ENV, capture_output=True, text=True)
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
     output = result.stdout + result.stderr
     assert result.returncode == 0, f"{' '.join(cmd)} failed:\n{output}"
     return output
@@ -89,7 +88,7 @@ def test_pipeline_page_title(fixture_site):
 
 
 def test_pipeline_code_output(fixture_site):
-    assert "hello from python 6*7 = 42" in article(fixture_site, "pipeline").get_text()
+    assert "hello from R 6*7 = 42" in article(fixture_site, "pipeline").get_text()
 
 
 def test_pipeline_figure_resolves(fixture_site):
@@ -279,14 +278,14 @@ def test_footnotes(fixture_site):
 
 def test_code_highlighted(fixture_site):
     art = article(fixture_site, "code")
-    blocks = art.select("div.language-python.highlight")
+    blocks = art.select("div.language-r.highlight")
     assert blocks
-    assert blocks[0].select_one("code span.nb").get_text() == "print"
+    assert blocks[0].select_one("code span.s").get_text() == '"visible-output-123"'
 
 
 def test_code_output_present(fixture_site):
     pres = [p.get_text() for p in article(fixture_site, "code").select("pre")]
-    assert any(p.strip() == "visible-output-123" for p in pres)
+    assert any(p.strip() == '[1] "visible-output-123"' for p in pres)
 
 
 def test_echo_false(fixture_site):
@@ -298,7 +297,7 @@ def test_echo_false(fixture_site):
 def test_output_false(fixture_site):
     text = article(fixture_site, "code").get_text()
     assert 'print("hidden-output-789")' in text
-    assert "hidden-output-789\n" not in text.replace('print("hidden-output-789")', "")
+    assert '[1] "hidden-output-789"' not in text
 
 
 def test_warning_false(fixture_site):
@@ -306,7 +305,7 @@ def test_warning_false(fixture_site):
     assert "after-suppressed" in text
     # only the source line mentions it, no warning output
     assert text.count("suppressed-warning-xyz") == 1
-    assert "UserWarning: shown-warning-abc" in text
+    assert "Warning: shown-warning-abc" in text
 
 
 # Front matter ---------------------------------------------------------------------
@@ -334,7 +333,7 @@ def test_code_fold_becomes_details(fixture_site):
     art = article(fixture_site, "degraded")
     fold = art.select_one("details.code-fold")
     assert fold is not None
-    assert fold.select_one("div.language-python.highlight") is not None
+    assert fold.select_one("div.language-r.highlight") is not None
 
 
 def test_callout_keeps_id(fixture_site):
@@ -367,30 +366,12 @@ def test_example_index(example_site):
     assert soup.title.get_text().startswith("Introduction")
     art = soup.select_one("article")
     assert "execute + render" in art.get_text()
+    assert "# A tibble: 2 × 2" in art.get_text()
     img = art.select_one("figure#fig-intro img")
     assert (example_site["root"] / "site" / img["src"]).resolve().is_file()
 
 
-# Plotly (Milestone 4) ------------------------------------------------------------
-
-
-def test_plotly_placeholder(fixture_site):
-    art = article(fixture_site, "plotly")
-    divs = art.select("div.zensical-plotly")
-    assert len(divs) == 1
-    fig = json.loads(divs[0]["data-plotly"])
-    # plotly >= 6 encodes arrays as base64 typed arrays; plotly.js decodes them
-    assert fig["data"][0]["type"] == "scatter"
-    assert "x" in fig["data"][0] and "y" in fig["data"][0]
-    assert fig["layout"]["title"]["text"] == "Scatter & <b>friends</b>"
-    # no inline scripts: they would run before plotly.js is loaded
-    assert not art.select("script")
-
-
-def test_plotly_js_copy_in_sync():
-    shipped = ROOT / "_extensions" / "zensical" / "plotly" / "zensical-plotly.js"
-    copy = EXAMPLE / "src" / "javascripts" / "zensical-plotly.js"
-    assert copy.read_text() == shipped.read_text()
+# Browser check ---------------------------------------------------------------
 
 
 @pytest.fixture(scope="session")
@@ -416,8 +397,8 @@ def served_example(example_site):
     server.shutdown()
 
 
-def test_instant_navigation_renders_plotly_and_math(served_example, browser_page):
-    """Needs network access for the plotly.js / MathJax CDNs."""
+def test_instant_navigation_renders_math(served_example, browser_page):
+    """Needs network access for the MathJax CDN."""
     pg = browser_page
     errors = []
     pg.on("pageerror", lambda e: errors.append(str(e)))
@@ -426,13 +407,10 @@ def test_instant_navigation_renders_plotly_and_math(served_example, browser_page
     pg.evaluate("window.__noReload = true")
 
     pg.click("nav a[href$='analysis/']")
-    pg.wait_for_selector(".zensical-plotly .main-svg", timeout=15000)
+    pg.wait_for_selector("figure#fig-hist img")
 
     pg.click("nav a[href$='math-citations/']")
     pg.wait_for_selector("mjx-container", timeout=15000)
-
-    pg.click("nav a[href$='analysis/']")
-    pg.wait_for_selector(".zensical-plotly .main-svg", timeout=15000)
 
     assert pg.evaluate("window.__noReload") is True, "navigation was not instant"
     assert errors == []

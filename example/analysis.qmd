@@ -1,0 +1,46 @@
+---
+title: Data analysis
+description: dplyr and ggplot2 output rendered at build time.
+---
+
+```{r}
+#| echo: false
+set.seed(42)
+
+df_data <- tibble::tibble(
+  group = rep(c("A", "B", "C"), each = 50),
+  value = c(rnorm(50, 0), rnorm(50, 1.5), rnorm(50, 3))
+)
+```
+
+## Summary table
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Summary statistics per group."
+df_summary <- df_data |>
+  dplyr::summarise(
+    mean = mean(value),
+    sd = sd(value),
+    count = dplyr::n(),
+    .by = group
+  )
+
+knitr::kable(df_summary, digits = 2)
+```
+
+@tbl-summary summarises the simulated data.
+
+## Distribution
+
+```{r}
+#| label: fig-hist
+#| fig-cap: "Histogram of values per group."
+#| fig-width: 6
+#| fig-height: 3.5
+ggplot2::ggplot(df_data, ggplot2::aes(value, fill = group)) +
+  ggplot2::geom_histogram(bins = 15, alpha = 0.6, position = "identity") +
+  ggplot2::theme_minimal()
+```
+
+The groups in @fig-hist are clearly shifted.

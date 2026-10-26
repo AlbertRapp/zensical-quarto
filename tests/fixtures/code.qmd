@@ -2,28 +2,26 @@
 title: Code cells
 ---
 
-```{python}
+```{r}
 print("visible-output-123")
 ```
 
-```{python}
+```{r}
 #| echo: false
 print("echo-false-output-456")
 ```
 
-```{python}
+```{r}
 #| output: false
 print("hidden-output-789")
 ```
 
-```{python}
+```{r}
 #| warning: false
-import warnings
-warnings.warn("suppressed-warning-xyz")
+warning("suppressed-warning-xyz")
 print("after-suppressed")
 ```
 
-```{python}
-import warnings
-warnings.warn("shown-warning-abc")
+```{r}
+warning("shown-warning-abc")
 ```

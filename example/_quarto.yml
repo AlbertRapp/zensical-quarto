@@ -1,13 +1,12 @@
+# Quarto renders the .qmd files in this folder to Markdown in docs/,
+# which Zensical then builds into site/ (see zensical.toml).
 project:
   type: default
   output-dir: docs
   render:
-    - "src/*.qmd"
+    - "*.qmd"
   resources:
-    - "src/javascripts/*"
-    - "src/*.bib"
-  # Quarto mirrors src/ into docs/src/; move it up so Zensical sees docs/*.md
-  post-render: _scripts/flatten_docs.py
+    - "javascripts/*"
 
 format: zensical-gfm
 
@@ -15,4 +14,4 @@ execute:
   freeze: auto
   warning: false
 
-bibliography: src/references.bib
+bibliography: references.bib

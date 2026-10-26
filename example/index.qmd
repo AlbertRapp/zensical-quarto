@@ -1,0 +1,35 @@
+---
+title: Introduction
+description: Quarto documents with executable R code, rendered to Markdown and built with Zensical.
+---
+
+This site is written in Quarto (the `.qmd` files in `example/`). `quarto render`
+executes the R code and writes Markdown to `docs/`, and `zensical build` turns
+that into the site you are reading.
+
+## A table from R
+
+```{r}
+df_tools <- tibble::tibble(
+  tool = c("Quarto", "Zensical"),
+  job = c("execute + render", "build site")
+)
+print(df_tools)
+```
+
+## A figure
+
+```{r}
+#| label: fig-intro
+#| fig-cap: "A simple line chart made with ggplot2."
+#| fig-width: 6
+#| fig-height: 3
+df_points <- tibble::tibble(x = 1:4, y = c(1, 4, 2, 3))
+
+ggplot2::ggplot(df_points, ggplot2::aes(x, y)) +
+  ggplot2::geom_line() +
+  ggplot2::geom_point(size = 3) +
+  ggplot2::theme_minimal()
+```
+
+@fig-intro shows a plot generated during `quarto render`.

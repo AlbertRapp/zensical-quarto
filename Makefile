@@ -1,7 +1,6 @@
-# Quarto renders example/src/*.qmd -> example/docs/*.md,
+# Quarto renders example/*.qmd -> example/docs/*.md,
 # Zensical builds example/docs -> example/site.
 EXAMPLE := example
-export QUARTO_PYTHON := $(CURDIR)/.venv/bin/python
 
 .PHONY: site render build serve test clean
 

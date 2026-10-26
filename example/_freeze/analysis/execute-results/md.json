@@ -1,0 +1,17 @@
+{
+  "hash": "ded6617078b4e5ca88b90553590e2161",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: Data analysis\ndescription: dplyr and ggplot2 output rendered at build time.\n---\n\n\n::: {.cell}\n\n:::\n\n\n## Summary table\n\n\n::: {#tbl-summary .cell tbl-cap='Summary statistics per group.'}\n\n```{.r .cell-code}\ndf_summary <- df_data |>\n  dplyr::summarise(\n    mean = mean(value),\n    sd = sd(value),\n    count = dplyr::n(),\n    .by = group\n  )\n\nknitr::kable(df_summary, digits = 2)\n```\n\n::: {.cell-output-display}\n\n\n|group |  mean|   sd| count|\n|:-----|-----:|----:|-----:|\n|A     | -0.04| 1.15|    50|\n|B     |  1.60| 0.92|    50|\n|C     |  2.85| 0.93|    50|\n\n\n:::\n:::\n\n\n@tbl-summary summarises the simulated data.\n\n## Distribution\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot2::ggplot(df_data, ggplot2::aes(value, fill = group)) +\n  ggplot2::geom_histogram(bins = 15, alpha = 0.6, position = \"identity\") +\n  ggplot2::theme_minimal()\n```\n\n::: {.cell-output-display}\n![Histogram of values per group.](analysis_files/figure-commonmark/fig-hist-1.png){#fig-hist}\n:::\n:::\n\n\nThe groups in @fig-hist are clearly shifted.\n",
+    "supporting": [
+      "analysis_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}

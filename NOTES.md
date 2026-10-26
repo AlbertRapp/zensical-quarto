@@ -6,7 +6,8 @@
 |---|---|
 | Quarto | 1.10.18 |
 | Pandoc (bundled, `quarto pandoc --version`) | 3.10 |
-| Python (project venv via uv) | 3.12 (system python3 is 3.10.12, not used) |
+| R | 4.4.3 (knitr 1.51, ggplot2) — runs the code chunks |
+| Python (project venv via uv) | 3.12 — only for Zensical and the tests |
 | uv | 0.7.20 |
 | Zensical | 0.0.73 |
 | Python-Markdown / pymdown-extensions | 3.11.2 / 12.3 |
@@ -26,7 +27,7 @@
   (which doesn't include the `pymdownx.blocks.*` extensions), so the example
   config lists everything explicitly. `toc` and `tables` are always added.
 - **Excluding files:** `exclude_docs` (gitignore-style multiline string), as in
-  MkDocs. Not needed: the `src/` → `docs/` split means Zensical never sees `.qmd`.
+  MkDocs. Not needed: Zensical only reads `docs/`, so it never sees `.qmd` files.
 - `pymdownx.blocks.details` output is `<details class="<type>">` (no `admonition`
   class); `blocks.admonition` gives `div.admonition.<type>`. Material's CSS has
   aliases for `caution` (→ warning style) and `important` (→ tip style), so all
@@ -67,15 +68,19 @@ Dumped with a Lua filter on a test document:
 - The gfm template also writes the title as an `# H1`. Kept: Material/Zensical
   uses an existing H1 instead of inserting the title again, so there's exactly one.
 
-## output-dir (VERIFY — partially contradicts plan)
+## output-dir (VERIFY — contradicts plan)
 
 - `output-dir: docs` **does** copy figure folders (`*_files/figure-commonmark/…`)
   and referenced images for Markdown output.
-- But Quarto keeps input paths relative to the project root, so `src/page.qmd` →
-  `docs/src/page.md`. There is no "input dir" option. **Fix:** a project
-  `post-render` script (`example/_scripts/flatten_docs.py`) moves `docs/src/*` up
-  to `docs/`. It also runs for single-file renders (`quarto render src/x.qmd`),
-  which the dev loop relies on (verified).
+- But Quarto keeps input paths relative to the project root, so a `src/` folder
+  (as the plan proposed) gives `docs/src/page.md`. A first version moved the
+  files up with a post-render script, but that **broke `quarto preview`** (and
+  so RStudio's Render button): *"No output created by quarto render"*, because the
+  expected output file had been moved. **Final layout:** the `.qmd` files live
+  directly in `example/`, so Quarto writes `docs/page.md` itself. Zensical only
+  reads `docs/`, so it still never sees `.qmd` files. Verified working:
+  `quarto render example`, `quarto render example/index.qmd`, `quarto preview`,
+  and `quarto::quarto_render()` from R.
 
 ## Raw output (Milestone 2, VERIFY)
 
@@ -113,25 +118,26 @@ Dumped with a Lua filter on a test document:
    Code folding therefore actually works.
 5. **Figures:** the image is a `Plain` block directly followed by the caption, so
    `figures.lua` makes it a `Para` to get a blank line in between.
-6. Jupyter prints `[IPKernelApp] WARNING | Kernel is running over TCP without
-   encryption` on every execution. Harmless (local kernel), not ours to fix.
 
-## Plotly and instant navigation (Milestone 4, VERIFY)
+## R code chunks (switched from Python)
 
-- Plotly's default notebook output for gfm is HTML with **inline scripts** that load
-  plotly.js from a CDN and **MathJax 2** (clashes with the site's MathJax 3).
-  Inline scripts would also run before an `extra_javascript` plotly.js has loaded.
-- Chosen approach (a variant of Option A): `zensical_plotly.py` registers a Plotly
-  renderer that emits only `<div class="zensical-plotly" data-plotly="<json>">`;
-  `zensical-plotly.js` draws all placeholders on `document$`. plotly.js is loaded
-  once via `extra_javascript`. Plotly 6 encodes arrays as base64 typed arrays in
-  the JSON; plotly.js 3 decodes them.
-- Option B (static images via kaleido) not implemented; documented in README.
-- **Instant navigation VERIFY (headless Chromium via Playwright):** without
-  `site_url`, Zensical does *full page loads* (instant navigation silently
-  disabled). With `site_url` set, navigation is instant (a `window` marker
-  survives) and Plotly figures and MathJax are rendered after each navigation,
-  with no page errors. Covered by `test_instant_navigation_renders_plotly_and_math`
-  (skipped when Playwright's Chromium isn't installed; needs CDN access).
-- Quarto copies a symlinked resource as a symlink, so the example keeps a real
-  copy of `zensical-plotly.js` in `src/javascripts/`; a test keeps it in sync.
+- Pages use R chunks (knitr engine, R 4.4.3, knitr 1.51). All filters work
+  unchanged: knitr's figure/table output reaches `figures.lua` in the same
+  `quarto-scaffold` shape as Jupyter's, and outputs are language-less code
+  blocks handled by `code.lua`. R warnings render as `Warning: …`.
+
+## Interactive output (Milestone 4) — dropped
+
+- Plotly support was implemented and verified, then **removed at the user's
+  request**: figures are static ggplot2 only. htmlwidgets are out of scope.
+  For the record: knitr screenshots htmlwidgets for non-HTML output *before*
+  dispatching `knit_print` methods (unless `screenshot.force = FALSE`), and R's
+  plotly 4.10.4 emits string titles that plotly.js 3 ignores.
+
+## Instant navigation (VERIFY)
+
+- Checked in headless Chromium (Playwright): without `site_url`, Zensical does
+  *full page loads* (instant navigation silently disabled). With `site_url` set,
+  navigation is instant (a `window` marker survives) and MathJax typesets after
+  each navigation via the `document$` subscription in `javascripts/mathjax.js`.
+  Covered by `test_instant_navigation_renders_math`.
