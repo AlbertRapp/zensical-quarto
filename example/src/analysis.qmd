@@ -4,6 +4,14 @@ description: Pandas and Matplotlib output rendered at build time.
 ---
 
 ```{python}
+#| include: false
+# Render Plotly figures as Zensical-friendly placeholders (see README)
+import sys
+sys.path.insert(0, "../_extensions/zensical/plotly")
+import zensical_plotly
+```
+
+```{python}
 #| echo: false
 import numpy as np
 import pandas as pd
@@ -42,3 +50,11 @@ plt.show()
 ```
 
 The groups in @fig-hist are clearly shifted.
+
+## Interactive chart
+
+```{python}
+import plotly.express as px
+
+px.box(data, x="group", y="value", points="all", height=400).show()
+```

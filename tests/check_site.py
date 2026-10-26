@@ -8,10 +8,14 @@ Two sites are built once per session:
 * the example site -- example/, built exactly like `make site`.
 """
 
+import functools
+import http.server
+import json
 import os
 import re
 import shutil
 import subprocess
+import threading
 from pathlib import Path
 
 import pytest
@@ -298,9 +302,10 @@ def test_output_false(fixture_site):
 
 
 def test_warning_false(fixture_site):
-    text = article(fixture_site, "code").get_text()
+    text = text_of(article(fixture_site, "code"))
     assert "after-suppressed" in text
-    assert "UserWarning: suppressed-warning-xyz" not in text
+    # only the source line mentions it, no warning output
+    assert text.count("suppressed-warning-xyz") == 1
     assert "UserWarning: shown-warning-abc" in text
 
 
@@ -352,3 +357,70 @@ def test_example_index(example_site):
     assert "execute + render" in art.get_text()
     img = art.select_one("figure#fig-intro img")
     assert (example_site["root"] / "site" / img["src"]).resolve().is_file()
+
+
+# Plotly (Milestone 4) ------------------------------------------------------------
+
+
+def test_plotly_placeholder(fixture_site):
+    art = article(fixture_site, "plotly")
+    divs = art.select("div.zensical-plotly")
+    assert len(divs) == 1
+    fig = json.loads(divs[0]["data-plotly"])
+    # plotly >= 6 encodes arrays as base64 typed arrays; plotly.js decodes them
+    assert fig["data"][0]["type"] == "scatter"
+    assert "x" in fig["data"][0] and "y" in fig["data"][0]
+    assert fig["layout"]["title"]["text"] == "Scatter & <b>friends</b>"
+    # no inline scripts: they would run before plotly.js is loaded
+    assert not art.select("script")
+
+
+def test_plotly_js_copy_in_sync():
+    shipped = ROOT / "_extensions" / "zensical" / "plotly" / "zensical-plotly.js"
+    copy = EXAMPLE / "src" / "javascripts" / "zensical-plotly.js"
+    assert copy.read_text() == shipped.read_text()
+
+
+@pytest.fixture(scope="session")
+def browser_page():
+    sync_api = pytest.importorskip("playwright.sync_api")
+    with sync_api.sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as exc:  # browser binaries not installed
+            pytest.skip(f"chromium not available: {exc}")
+        page_ = browser.new_page()
+        yield page_
+        browser.close()
+
+
+@pytest.fixture(scope="session")
+def served_example(example_site):
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=example_site["root"] / "site")
+    handler.log_message = lambda *args: None
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    yield f"http://127.0.0.1:{server.server_port}/"
+    server.shutdown()
+
+
+def test_instant_navigation_renders_plotly_and_math(served_example, browser_page):
+    """Needs network access for the plotly.js / MathJax CDNs."""
+    pg = browser_page
+    errors = []
+    pg.on("pageerror", lambda e: errors.append(str(e)))
+    pg.goto(served_example)
+    pg.wait_for_load_state("networkidle")
+    pg.evaluate("window.__noReload = true")
+
+    pg.click("nav a[href$='analysis/']")
+    pg.wait_for_selector(".zensical-plotly .main-svg", timeout=15000)
+
+    pg.click("nav a[href$='math-citations/']")
+    pg.wait_for_selector("mjx-container", timeout=15000)
+
+    pg.click("nav a[href$='analysis/']")
+    pg.wait_for_selector(".zensical-plotly .main-svg", timeout=15000)
+
+    assert pg.evaluate("window.__noReload") is True, "navigation was not instant"
+    assert errors == []

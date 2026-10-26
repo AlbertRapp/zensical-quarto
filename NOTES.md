@@ -115,3 +115,23 @@ Dumped with a Lua filter on a test document:
    `figures.lua` makes it a `Para` to get a blank line in between.
 6. Jupyter prints `[IPKernelApp] WARNING | Kernel is running over TCP without
    encryption` on every execution. Harmless (local kernel), not ours to fix.
+
+## Plotly and instant navigation (Milestone 4, VERIFY)
+
+- Plotly's default notebook output for gfm is HTML with **inline scripts** that load
+  plotly.js from a CDN and **MathJax 2** (clashes with the site's MathJax 3).
+  Inline scripts would also run before an `extra_javascript` plotly.js has loaded.
+- Chosen approach (a variant of Option A): `zensical_plotly.py` registers a Plotly
+  renderer that emits only `<div class="zensical-plotly" data-plotly="<json>">`;
+  `zensical-plotly.js` draws all placeholders on `document$`. plotly.js is loaded
+  once via `extra_javascript`. Plotly 6 encodes arrays as base64 typed arrays in
+  the JSON; plotly.js 3 decodes them.
+- Option B (static images via kaleido) not implemented; documented in README.
+- **Instant navigation VERIFY (headless Chromium via Playwright):** without
+  `site_url`, Zensical does *full page loads* (instant navigation silently
+  disabled). With `site_url` set, navigation is instant (a `window` marker
+  survives) and Plotly figures and MathJax are rendered after each navigation,
+  with no page errors. Covered by `test_instant_navigation_renders_plotly_and_math`
+  (skipped when Playwright's Chromium isn't installed; needs CDN access).
+- Quarto copies a symlinked resource as a symlink, so the example keeps a real
+  copy of `zensical-plotly.js` in `src/javascripts/`; a test keeps it in sync.

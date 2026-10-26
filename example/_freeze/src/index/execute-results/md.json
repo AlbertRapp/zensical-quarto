@@ -1,10 +1,10 @@
 {
-  "hash": "3f81ae7bd72c0a3ff2f821e52f2f572d",
+  "hash": "667db9cf5addcb6ce15c7edc402ea8a5",
   "result": {
     "engine": "jupyter",
-    "markdown": "---\ntitle: Introduction\ndescription: Quarto documents with executable Python, rendered to Markdown and built with Zensical.\n---\n\nThis site is written in Quarto (`.qmd` files in `src/`). `quarto render`\nexecutes the code and writes Markdown to `docs/`, and `zensical build` turns\nthat into the site you are reading.\n\n## A table from Python\n\n::: {.cell execution_count=1}\n``` {.python .cell-code}\nimport pandas as pd\n\ndf = pd.DataFrame({\"tool\": [\"Quarto\", \"Zensical\"], \"job\": [\"execute + render\", \"build site\"]})\nprint(df.to_string(index=False))\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n    tool              job\n  Quarto execute + render\nZensical       build site\n```\n:::\n:::\n\n\n## A figure\n\n::: {.cell execution_count=2}\n``` {.python .cell-code}\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 3))\nax.plot([1, 2, 3, 4], [1, 4, 2, 3], marker=\"o\")\nax.set_xlabel(\"x\")\nax.set_ylabel(\"y\")\nplt.show()\n```\n\n::: {.cell-output .cell-output-display}\n![A simple line chart made with Matplotlib.](index_files/figure-commonmark/fig-intro-output-1.png){#fig-intro}\n:::\n:::\n\n\n@fig-intro shows a plot generated during `quarto render`.\n<!-- touch -->\n\n",
+    "markdown": "---\ntitle: Introduction\ndescription: Quarto documents with executable Python, rendered to Markdown and built with Zensical.\n---\n\nThis site is written in Quarto (`.qmd` files in `src/`). `quarto render`\nexecutes the code and writes Markdown to `docs/`, and `zensical build` turns\nthat into the site you are reading.\n\n## A table from Python\n\n::: {.cell execution_count=1}\n``` {.python .cell-code}\nimport pandas as pd\n\ndf = pd.DataFrame({\"tool\": [\"Quarto\", \"Zensical\"], \"job\": [\"execute + render\", \"build site\"]})\nprint(df.to_string(index=False))\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n    tool              job\n  Quarto execute + render\nZensical       build site\n```\n:::\n:::\n\n\n## A figure\n\n::: {.cell execution_count=2}\n``` {.python .cell-code}\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 3))\nax.plot([1, 2, 3, 4], [1, 4, 2, 3], marker=\"o\")\nax.set_xlabel(\"x\")\nax.set_ylabel(\"y\")\nplt.show()\n```\n\n::: {.cell-output .cell-output-display}\n![A simple line chart made with Matplotlib.](index_files/figure-commonmark/fig-intro-output-1.png){#fig-intro}\n:::\n:::\n\n\n@fig-intro shows a plot generated during `quarto render`.\n\n",
     "supporting": [
-      "index_files"
+      "index_files/figure-commonmark"
     ],
     "filters": [],
     "includes": {}
