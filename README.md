@@ -74,7 +74,7 @@ But if you've run `zensical serve`, then you can see the updated page on <http:/
    Callouts, tabsets, math, @fig-x refs and [@citations] all work.
    :::
 
-   ```{{r}}
+   ```{r}
    #| label: fig-x
    #| fig-cap: "A ggplot."
    ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
