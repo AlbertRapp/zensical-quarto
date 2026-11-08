@@ -87,8 +87,8 @@ But if you've run `zensical serve`, then you can see the updated page on <http:/
 3. Add it to `nav` in `example/zensical.toml`, using the rendered `.md` name:
    `{ "My page" = "my-page.md" }`.
 
-> [!TIP]
-> If you install an extension like "Ecen Better TOML", then you'll have a nicer time modifying the `zensical.toml` file. You know, because of code highlighting.
+  > [!TIP]
+  > If you install an extension like "Ecen Better TOML", then you'll have a nicer time modifying the `zensical.toml` file. You know, because of code highlighting.
 
 
 ## Layout
