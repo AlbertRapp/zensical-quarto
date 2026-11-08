@@ -1,7 +1,9 @@
 # Quarto renders the .qmd files in this folder to Markdown in docs/,
-# which Zensical then builds into site/ (see zensical.toml).
+# then post-render runs Zensical, which builds docs/ into site/
+# (see zensical.toml).
 project:
   type: default
+  post-render: "zensical build --clean"
   output-dir: docs
   render:
     - "*.qmd"
@@ -10,8 +12,13 @@ project:
 
 format: zensical-gfm
 
+
 execute:
   freeze: auto
   warning: false
+
+knitr:
+  opts_chunk:
+    collapse: true
 
 bibliography: references.bib

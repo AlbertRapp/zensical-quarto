@@ -1,7 +1,0 @@
----
-title: Footnotes
----
-
-A claim.[^a] Another one.^[An inline footnote.]
-
-[^a]: The first footnote.

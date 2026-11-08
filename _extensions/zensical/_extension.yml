@@ -17,8 +17,11 @@ contributes:
         - filters/callouts.lua
         - filters/tabsets.lua
         - filters/math.lua
+        - filters/crossrefs.lua
         # post-render: runs after Quarto has rendered crossrefs etc.
         - path: filters/blocks.lua
+          at: post-render
+        - path: filters/headings.lua
           at: post-render
         - path: filters/figures.lua
           at: post-render

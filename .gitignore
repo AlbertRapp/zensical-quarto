@@ -1,7 +1,8 @@
-.venv/
-__pycache__/
 example/docs/
 example/site/
-tests/_build/
-*.quarto_ipynb
+example/_freeze/
 .quarto/
+
+/.luarc.json
+README_files/
+README.html

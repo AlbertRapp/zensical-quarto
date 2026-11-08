@@ -3,10 +3,10 @@ title: Callouts and tabs
 description: Quarto callouts become admonitions, panel tabsets become content tabs.
 ---
 
-## Callouts
+## Callouts {#sec-callouts}
 
 ::: {.callout-note}
-A note without an explicit title.
+A note without an explicit title. Fancy, isn't it?
 :::
 
 ::: {.callout-tip title="Pro tip"}
@@ -22,7 +22,7 @@ The heading becomes the admonition title.
 :::
 
 ::: {.callout-caution collapse="true" title="Click to expand"}
-Hidden until you open it.
+Hidden until you open it. But it's there.
 :::
 
 ::: {.callout-important collapse="false" title="Open by default"}
@@ -33,19 +33,19 @@ Callouts can be nested.
 :::
 :::
 
-## Tabsets
+## Tabsets {#sec-tabsets}
 
 ::: {.panel-tabset}
 
 ## Python
 
-```python
+```{python}
 print("hello")
 ```
 
 ## R
 
-```r
+```{r}
 print("hello")
 ```
 

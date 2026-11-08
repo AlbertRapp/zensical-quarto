@@ -1,6 +1,0 @@
----
-title: "Front matter: title"
-description: "A description from the front matter."
----
-
-Body.

@@ -1,6 +1,9 @@
 ---
 title: Introduction
 description: Quarto documents with executable R code, rendered to Markdown and built with Zensical.
+knitr:
+  opts_chunk:
+    collapse: true
 ---
 
 This site is written in Quarto (the `.qmd` files in `example/`). `quarto render`
@@ -8,6 +11,8 @@ executes the R code and writes Markdown to `docs/`, and `zensical build` turns
 that into the site you are reading.
 
 ## A table from R
+
+I will refer to @sec-tabsets 
 
 ```{r}
 df_tools <- tibble::tibble(
@@ -17,7 +22,7 @@ df_tools <- tibble::tibble(
 print(df_tools)
 ```
 
-## A figure
+## A figure {#sec-figure}
 
 ```{r}
 #| label: fig-intro
