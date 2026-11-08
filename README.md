@@ -1,6 +1,6 @@
 # Quarto ❤️ Zensical
 
-This repo combines the code execution power of Quarto with the beautiful aesthetics of [Zensical](https://zensical.org).
+This repo combines the code execution power of [Quarto](https://quarto.org) with the beautiful aesthetics of [Zensical](https://zensical.org).
 The idea is this:
 
 - Quarto will be equipped with a format extension, **`zensical-gfm`**, that renders `.qmd` files to Markdown
