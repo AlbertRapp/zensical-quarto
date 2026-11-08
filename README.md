@@ -1,43 +1,46 @@
-# zensical-quarto
+# Quarto ❤️ Zensical
 
-Write a website in Quarto with executable R code, and publish it with
-[Zensical](https://zensical.org).
+This repo combines the code execution power of Quarto with the beautiful aesthetics of [Zensical](https://zensical.org).
+The idea is this:
 
-A Quarto format extension, **`zensical-gfm`**, renders `.qmd` files to Markdown
-that Zensical understands: callouts become admonitions, tabsets become content
-tabs, math is rendered by MathJax, and cross-references, citations and footnotes
-work.
+- Quarto will be equipped with a format extension, **`zensical-gfm`**, that renders `.qmd` files to Markdown
+- Those Markdown files are formatted in a way that Zensical understands: callouts become admonitions, tabsets become content
+tabs, you get the idea
+
+So the workflow is a 2-step process:
 
 ```
-example/*.qmd ──quarto render──▶ example/docs/*.md ──zensical build──▶ example/site/
-               (runs your R code)                    (makes the website)
+example/*.qmd ──▶ quarto preview ──▶ example/docs/*.md ──▶ zensical build ──▶ example/site/
+                  (runs your code)                          (makes the website)
 ```
 
-## Install (once)
+## Prerequisites
 
-- [Quarto](https://quarto.org/docs/get-started/) ≥ 1.5 (tested with 1.10.18)
-- R packages: `install.packages(c("knitr", "rmarkdown", "ggplot2", "dplyr", "tibble"))`
-- The `zensical` command: `uv tool install zensical` (or `pipx install zensical`).
-  Zensical is distributed as a Python package, so this is the only place Python
-  is involved. You install it once, like Quarto, and never write Python.
+Obviously, you will need the two tools that we combine here.
+So go ahead and install Quarto and Zensical:
 
-## Use
+- You can find install instruction for Quarto [on Quarto's website](https://quarto.org/docs/get-started/)
+- For Zensical you need to install it via Python. The easiest way to do that is to follow these two steps:
+  - Install the `uv` tool. It's really just running one command in the terminal. You can find out the correct one for your OS by following the ([Install instructions](https://docs.astral.sh/uv/getting-started/installation/#__tabbed_1_1))
+  - Install `zensical` via `uv tool install zensical`
 
-```bash
-quarto render example   # render all pages, then build the site into example/site/
-```
 
-`_quarto.yml` runs `zensical build` as a `post-render` step, so every render
-(of the whole project or a single page) also rebuilds the site.
+## Rendering
 
-**Live preview:** run two things side by side, in two terminals inside `example/`:
+Checkout the `example/` directory in this repo.
+It is set up in a way that if you render any Quarto file, then the Zensical website is re-built as well.
+In technical terms, `_quarto.yml` runs `zensical build` as a `post-render` step.
+
+
+Most of the time, though, you'll want to have a live preview of your output.
+So inside the `example/` directory run these two commands in two separate terminals:
 
 ```bash
 quarto preview --no-serve --no-browser   # re-renders each .qmd you save into docs/
 zensical serve                           # rebuilds and reloads http://localhost:8000
 ```
 
-You could combine it into one command as well.
+You could also combine it into one command as well.
 On Linux and Mac, this should work:
 
 ```sh
@@ -51,9 +54,11 @@ $p = Start-Process quarto -ArgumentList 'preview','--no-serve','--no-browser' -N
 try { zensical serve } finally { taskkill /T /F /PID $p.Id | Out-Null }
 ```
 
-**RStudio / Positron:** the Render button works too and rebuilds `site/`. Its own
-preview only shows the raw Markdown; the real site is on <http://localhost:8000>
-while `zensical serve` is running.
+### Using RStudio or Positron
+
+Using the render button from RStudio / Positron works too.
+But this will only display the updated Markdown files inside the `site/` directory.
+But if you've run `zensical serve`, then you can see the updated page on <http://localhost:8000>
 
 ## Add a page
 
@@ -77,33 +82,42 @@ while `zensical serve` is running.
    ```
    ````
 
-2. Add it to `nav` in `example/zensical.toml`, using the rendered `.md` name:
+2. Add it to the `_quarto.yml` file.
+
+3. Add it to `nav` in `example/zensical.toml`, using the rendered `.md` name:
    `{ "My page" = "my-page.md" }`.
+
+> [!TIP]
+> If you install an extension like "Ecen Better TOML", then you'll have a nicer time modifying the `zensical.toml` file. You know, because of code highlighting.
+
 
 ## Layout
 
 ```
-_extensions/zensical/   the format: _extension.yml + one Lua filter per feature
 example/
+├── _extensions/zensical/  the format: _extension.yml + one Lua filter per feature
 ├── _quarto.yml         Quarto config (format, output-dir: docs, freeze, post-render)
 ├── zensical.toml       site config: title, nav, theme, Markdown extensions
 ├── *.qmd               your pages
 ├── references.bib      bibliography
 ├── javascripts/        MathJax config
-├── _extensions         symlink to ../_extensions
 ├── _freeze/            cached R results (commit this)
 ├── docs/               generated by Quarto (don't edit)
 └── site/               generated by Zensical (don't edit)
-NOTES.md                verified Quarto/Zensical behaviour the filters rely on
+README.md               The readme for this repo
 ```
 
-**Your own project:** copy `example/`. Replace the `_extensions` symlink with a
-copy of `_extensions/zensical/` (or run `quarto add <github-user>/zensical-quarto`),
-then edit `zensical.toml`. Keep its `markdown_extensions` list, because listing
+## Your Own Project
+
+If you want to use this template for your own projects, do the following:
+
+- Copy `example/` 
+- Edit `zensical.toml`. Keep its `markdown_extensions` list, because listing
 extensions replaces Zensical's defaults. Keep `site_url` too, because without it
 Zensical turns off instant page navigation.
+- Remove unneccessary `.qmd` files from the directory and from `_quarto.yml`. Make sure to also remove the corresponding `.md` files from `zensical.toml` too.
 
-**Freeze:** `execute: freeze: auto` stores R results in `_freeze/`. A page's code
+**Freeze:** `execute: freeze: auto` stores results in `_freeze/`. A page's code
 only re-runs when that page changes. Delete `_freeze/` to re-run
 everything.
 
